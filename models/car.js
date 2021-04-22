@@ -21,6 +21,11 @@ module.exports = (sequelize, DataTypes) => {
 			status: DataTypes.STRING,
 		},
 		{
+			hooks: {
+				beforeCreate: (instance, options) => {
+					instance.status = 'Belum Disewakan';
+				},
+			},
 			sequelize,
 			modelName: 'Car',
 		}

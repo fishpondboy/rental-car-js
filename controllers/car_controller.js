@@ -1,4 +1,6 @@
 const { Car, Admin } = require('../models');
+const multer = require('multer');
+const upload = multer({ dest: `${process.cwd()}/public/img` });
 
 module.exports = class Controller {
 	static getAll(req, res) {
@@ -14,10 +16,35 @@ module.exports = class Controller {
 	}
 
 	static getAdd(req, res) {
-		res.render('car_add');
+		Admin.findAll({ order: [['full_name', 'ASC']] })
+			.then((data) => {
+				res.render('car_add', { data });
+			})
+			.catch((err) => {
+				res.send(err);
+			});
 	}
 
-	static addCar(req, res) {}
+	static addCar(req, res) {
+		upload
+			.single('image')
+			.then(() => {
+				return Car.create({
+					type: req.body.type,
+					detail: req.body.detail,
+					image: file.name,
+					price: req.files.price,
+					AdminId: 1, ///<----- id dari session
+				});
+			})
+			.then(() => {
+				res.redirect('/car');
+			})
+			.catch((err) => {
+				console.log(err);
+				res.send(err);
+			});
+	}
 
 	static getEdit(req, res) {}
 
